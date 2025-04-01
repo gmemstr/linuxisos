@@ -1,0 +1,98 @@
+/* Global Styles */
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: Arial, sans-serif;
+	line-height: 1.6;
+	color: #333;
+	background-color: #f9f9f9;
+}
+
+/* Header Styles */
+header {
+	background-color: #333;
+	color: #fff;
+	padding: 2rem;
+	text-align: center;
+}
+
+header h1 {
+	font-size: 2.5rem;
+	margin-bottom: 0.5rem;
+}
+
+header h2 {
+	font-size: 1.5rem;
+	font-weight: normal;
+	margin-bottom: 1rem;
+}
+
+header p {
+	font-size: 1rem;
+	margin-bottom: 1rem;
+}
+
+header code {
+	background-color: #444;
+	color: #fff;
+	padding: 0.2rem 0.5rem;
+	border-radius: 0.2rem;
+}
+
+/* Main Styles */
+main {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 2rem;
+}
+
+main ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+li {
+	margin: 5px;
+	text-align: center;
+	text-decoration: none;
+}
+
+a {
+	text-decoration: none;
+}
+
+a li {
+	background-color: #333;
+	color: #fff;
+	padding: 5px;
+	text-decoration: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+	header {
+		padding: 1.5rem;
+	}
+
+	main {
+		padding: 1.5rem;
+	}
+}
+
+@media (max-width: 480px) {
+	header h1 {
+		font-size: 2rem;
+	}
+
+	header h2 {
+		font-size: 1.2rem;
+	}
+}

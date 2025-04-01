@@ -10,7 +10,12 @@
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.5.2",
-    "wrangler": "^3.60.3",
-    "vitest": "2.0.5"
+    "vitest": "2.0.5",
+    "wrangler": "^4.6.0"
+  },
+  "dependencies": {
+    "bencode": "^4.0.0",
+    "feed": "^4.2.2",
+    "hono": "^4.7.5"
   }
 }
