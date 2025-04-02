@@ -21,17 +21,21 @@ export class FedoraWorkflow extends WorkflowEntrypoint {
 			return torrents;
 		});
 
-		await step.do("download and modify torrents", async () => {
-			for (const torrent of torrents) {
-				// Parse out filename from torrent URL
-				const torrentUrl = new URL(torrent);
-				const torrentFilename = torrentUrl.pathname.split('/').pop();
+		const existing = await step.do("filter existing Fedora torrents", async () => {
+			const files = await this.env.R2.list({prefix: "Fedora-"});
+			const obj = {};
+			files.objects.forEach((object) => obj[object.key] = true);
+			return obj;
+		});
 
-				if (await this.env.R2.get(torrentFilename) !== null) {
-					console.log("torrent file already exists in r2");
-					continue;
-				}
-
+		const mods = []
+		for (const torrent of torrents) {
+			const torrentUrl = new URL(torrent);
+			const torrentFilename = torrentUrl.pathname.split('/').pop();
+			if (existing[torrentFilename]) {
+				continue
+			}
+			mods.push(step.do(`download and modify ${torrentFilename}`, async () => {
 				const resp = await fetch(torrent);
 				const buff = await resp.arrayBuffer();
 				const b2 = Buffer.from(new  Uint8Array(buff));
@@ -47,7 +51,8 @@ export class FedoraWorkflow extends WorkflowEntrypoint {
 
 				const encodedTorrent = bencode.encode(result);
 				this.env.R2.put(torrentFilename, encodedTorrent);
-			}
-		});
+			}));
+		}
+		await Promise.all(mods);
 	}
 }

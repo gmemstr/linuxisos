@@ -1,52 +1,28 @@
 import { WorkflowEntrypoint } from "cloudflare:workers"
 import bencode from 'bencode'
 
-export class DebianWorkflow extends WorkflowEntrypoint {
+export class UbuntuWorkflow extends WorkflowEntrypoint {
 	async run(event, step) {
-		let hrefs = await step.do("fetch iso and torrent hrefs", async () => {
-			const res = await fetch('https://www.debian.org/distrib/', {
+		let torrents = await step.do("fetch iso and torrent hrefs", async () => {
+			const res = await fetch('https://ubuntu.com/download/alternative-downloads', {
 				headers: { 'User-Agent': 'LinuxISOs Scraper (linuxisos@gmem.ca)' },
 			});
 
 			const torrents = [];
 			const rewriter = new HTMLRewriter()
-				.on('a[href*="bt"]', {
+				.on('a[href$=".torrent"]', {
 					element(element) {
 						torrents.push(element.getAttribute('href'));
 					},
-				});
+				})
 
 			const _ = await rewriter.transform(res).arrayBuffer();
 
-			return { torrents: torrents };
+			return torrents;
 		});
 
-
-		let torrents = await step.do("get torrent files", async () => {
-			const torrentFiles = [];
-			for (const link of hrefs.torrents) {
-				if (link.endsWith('.torrent')) {
-					torrentFiles.push(link);
-				} else {
-					const torRewriter = new HTMLRewriter().on('.indexcolname > a[href$="torrent"]', {
-						element(element) {
-							torrentFiles.push(`${link}${element.getAttribute('href')}`);
-						},
-					});
-					await torRewriter
-						.transform(
-							await fetch(link, {
-								headers: { 'User-Agent': 'LinuxISOs Scraper (linuxisos@gmem.ca)' },
-							}),
-						)
-						.arrayBuffer();
-				}
-			}
-			return torrentFiles;
-		});
-
-		const existing = await step.do("filter existing Debian torrents", async () => {
-			const files = await this.env.R2.list({prefix: "debian-"});
+		const existing = await step.do("filter existing Ubuntu torrents", async () => {
+			const files = await this.env.R2.list({prefix: "ubuntu-"});
 			const obj = {};
 			files.objects.forEach((object) => obj[object.key] = true);
 			return obj;
