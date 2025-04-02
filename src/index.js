@@ -1,9 +1,10 @@
 import { DebianWorkflow } from "./debian";
 import { ArchLinuxWorkflow } from "./arch-linux";
+import { FedoraWorkflow } from "./fedora";
 import { Hono } from 'hono'
 import { Feed } from 'feed';
 
-export { DebianWorkflow, ArchLinuxWorkflow };
+export { DebianWorkflow, ArchLinuxWorkflow, FedoraWorkflow };
 
 const app = new Hono()
 
@@ -80,5 +81,8 @@ export default {
 		newId = await crypto.randomUUID();
 		let arch = await env.ARCHLINUX_WORKFLOW.create({ id: newId });
 		console.log(`started ${newId} of archlinux workflow`);
+		newId = await crypto.randomUUID();
+		let fedora = await env.FEDORA_WORKFLOW.create({ id: newId });
+		console.log(`started ${newId} of fedora workflow`);
 	}
 }
