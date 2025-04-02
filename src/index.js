@@ -3,6 +3,7 @@ import { ArchLinuxWorkflow } from "./arch-linux";
 import { FedoraWorkflow } from "./fedora";
 import { UbuntuWorkflow } from "./ubuntu";
 import { Hono } from 'hono'
+import { cache } from 'hono/cache'
 import { Feed } from 'feed';
 
 export { DebianWorkflow, ArchLinuxWorkflow, FedoraWorkflow, UbuntuWorkflow };
@@ -15,13 +16,21 @@ app.get('/', async (c) => {
 		return response;
 	}
 	const torrents = await c.env.R2.list();
-	let list = '';
-	for (const torrent of torrents.objects) {
-		list += `<a href="https://linuxtorrents.gmem.ca/${torrent.key}"><li>📂 ${torrent.key}</li></a>`
-	}
+	const sections = {};
+	torrents.objects.forEach(torrent => {
+		const prefix = torrent.key.split('-')[0];
+		if (!sections[prefix]) {
+			sections[prefix] = '';
+		}
+		sections[prefix] += `<a href="https://linuxtorrents.gmem.ca/${torrent.key}"><li>📂 ${torrent.key}</li></a>`;
+	});
+
+	let list = Object.entries(sections).map(([section, li]) =>
+		`<details><summary>${section}</summary><ul>${li}</ul></details>`
+	).join('');
 
 	return new HTMLRewriter()
-		.on("ul", {
+		.on("main", {
 			element(element) {
 				element.setInnerContent(list, {html: true});
 			}
@@ -29,11 +38,11 @@ app.get('/', async (c) => {
 		.transform(response);
 });
 
-app.get('/atom', async (c) => {
+app.get('/atom', cache({ cacheName: 'linuxisos-index-atom', cacheControl: 'max-age=1800' }),async (c) => {
 	return new Response((await buildFeed(c.env)).atom1(), {headers: { 'Content-Type': 'application/atom+xml' }});
 });
 
-app.get('/rss', async (c) => {
+app.get('/rss', cache({ cacheName: 'linuxisos-index-rss', cacheControl: 'max-age=1800' }), async (c) => {
 	return new Response((await buildFeed(c.env)).rss2(), {headers: { 'Content-Type': 'application/atom+xml' }});
 });
 

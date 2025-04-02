@@ -45,18 +45,31 @@ header code {
 
 /* Main Styles */
 main {
-	display: flex;
-	flex-direction: column;
 	align-items: center;
 	padding: 2rem;
+	width: min(100%, 50rem);
+	margin: 0 auto;
 }
 
 main ul {
 	list-style: none;
 	padding: 0;
 	margin: 0;
-	display: flex;
-	flex-direction: column;
+}
+
+main details {
+	display: block;
+	margin-bottom: 20px;
+	padding: 10px;
+	border-radius: 8px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+main summary {
+	font-size: 1.2em;
+	font-weight: bold;
+	color: #333;
+	cursor: pointer;
 }
 
 li {

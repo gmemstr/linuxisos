@@ -36,5 +36,10 @@ name = "fedora-workflow"
 binding = "FEDORA_WORKFLOW"
 class_name = "FedoraWorkflow"
 
+[[workflows]]
+name = "ubuntu-workflow"
+binding = "UBUNTU_WORKFLOW"
+class_name = "UbuntuWorkflow"
+
 [observability]
 enabled = true
